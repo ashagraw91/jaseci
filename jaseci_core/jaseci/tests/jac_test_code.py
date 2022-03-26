@@ -275,7 +275,9 @@ prog1 = \
         has output;
         q = use.enc_question(["How old are you?",
                               "which animal is the best?"]);
+        std.log(q);
         a = use.enc_answer(["I'm 40 years old.", "Elephants rule."]);
+        std.log(a);
         output = use.qa_score(q, a);
         report output;
     }
@@ -901,6 +903,7 @@ string_manipulation = \
         report a.str::is_upper;
         report a.str::is_lower;
         report a.str::is_space;
+        report '{"a": 5}'.str::load_json;
         report a.str::count('t');
         report a.str::find('i');
         report a.str::split;
@@ -1151,5 +1154,77 @@ walker_spawn_unwrap_check = \
 
     walker init {
         report &(spawn here walker::print);
+    }
+    """
+
+std_get_report = \
+    """
+    walker init {
+       report 3;
+       report 5;
+       report 6;
+       report 7;
+       report std.get_report();
+       report 8;
+    }
+    """
+
+func_with_array_index = \
+    """
+    walker init {
+       report 3;
+       report 5;
+       report std.get_report()[0];
+    }
+    """
+
+rt_error_test1 = \
+    """
+    walker init {
+       spawn here --> node::generic;
+       report -->[2];
+    }
+    """
+
+
+root_type_nodes = \
+    """
+    walker init {
+       spawn here --> node::root;
+       report here.details['name'];
+       report -->[0].details['name'];
+    }
+    """
+
+invalid_key_error = \
+    """
+    walker init {
+       report here.context['adfas'];
+    }
+    """
+
+
+file_io = \
+    """
+    walker init {
+        fn="fileiotest.txt";
+        a = {'a': 5};
+        file.dump_json(fn, a);
+        b=file.load_json(fn);
+        b['a']+=b['a'];
+        file.dump_json(fn, b);
+        c=file.load_str(fn);
+        file.append_str(fn, c);
+        c=file.load_str(fn);
+        report c;
+    }
+    """
+
+
+auto_cast = \
+    """
+    walker init {
+        report 1==1.0;
+        report 1.0==1;
     }
     """

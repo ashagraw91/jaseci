@@ -3,6 +3,7 @@ from django.urls import reverse
 
 from rest_framework.test import APIClient
 from jaseci.utils.utils import TestCaseHelper
+import jaseci.actions.live_actions as lact
 from django.test import TestCase
 import uuid
 import base64
@@ -45,6 +46,7 @@ class test_ll_wall(TestCaseHelper, TestCase):
         res = self.client.post(reverse(f'jac_api:{payload["op"]}'), payload)
         self.gph = self.master._h.get_obj(
             self.master.jid, uuid.UUID(res.data['jid']))
+        lact.load_local_actions('jaseci_serv/jac_api/tests/infer.py')
 
     def tearDown(self):
         super().tearDown()
@@ -76,14 +78,14 @@ class test_ll_wall(TestCaseHelper, TestCase):
         self.run_walker('gen_day_workettes', {
                         "date": "2021-07-12", "num_workettes": num_workettes})
 
-        data = self.run_walker('get_latest_day', {'show_report': 1})
+        data = self.run_walker('get_latest_day', {'show_report': 1})['report']
 
         day_id = data[0][1]['jid']
         day_date = data[0][1]['context']['day']
         day_note = data[0][1]['context']['note']
 
         data = self.run_walker('get_workettes_deep', {
-                               'show_report': 1}, prime=day_id)
+                               'show_report': 1}, prime=day_id)['report']
         self.assertEqual(len(data[0]), num_workettes)
 
         # certify day, should return day highlights
@@ -94,7 +96,7 @@ class test_ll_wall(TestCaseHelper, TestCase):
              "color": "#6e30dd", "icon": "0x1F604"},
             {"id": data[0][2], "type": "Required the Most Work",
              "color": "#b926df", "icon": "0x1F4AA"}
-        ]}, prime=day_id)
+        ]}, prime=day_id)['report']
         self.assertEqual(data[0][0][0][0][0]['jid'], day_id)
         self.assertEqual(data[0][0][0][0][1], day_date)
         self.assertEqual(data[0][0][0][1], day_note)

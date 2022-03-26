@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 from rest_framework.test import APIClient
-from jaseci.actions.module.ai_serving_api import check_model_live
+import jaseci.actions.live_actions as lact
 from jaseci.utils.utils import TestCaseHelper
 from django.test import TestCase
 import uuid
@@ -50,21 +50,21 @@ class test_zsb(TestCaseHelper, TestCase):
 
     def test_zsb_create_answer(self):
         """Test ZSB Create Answer call USE api"""
-        if (not check_model_live('USE')):
+        if (not lact.load_remote_actions('http://js-use-qa')):
             self.skipTest("external resource not available")
         data = self.run_walker('add_bot', {'name': "Bot"})
-        self.assertEqual(data[0]['name'], 'bot')
-        bot_jid = data[0]['jid']
+        self.assertEqual(data['report'][0]['name'], 'bot')
+        bot_jid = data['report'][0]['jid']
         data = self.run_walker('create_answer', {'text': "Yep"}, prime=bot_jid)
-        self.assertEqual(data[0]['name'], 'answer')
+        self.assertEqual(data['report'][0]['name'], 'answer')
 
     def test_zsb_ask_question(self):
         """Test ZSB Create Answer call USE api"""
-        if (not check_model_live('USE')):
+        if (not lact.load_remote_actions('http://js-use-qa')):
             self.skipTest("external resource not available")
         data = self.run_walker('add_bot', {'name': "Bot"})
-        self.assertEqual(data[0]['name'], 'bot')
-        bot_jid = data[0]['jid']
+        self.assertEqual(data['report'][0]['name'], 'bot')
+        bot_jid = data['report'][0]['jid']
         data = self.run_walker('create_answer', {'text': "Yep"}, prime=bot_jid)
         data = self.run_walker(
             'create_answer', {'text': "Nope"}, prime=bot_jid)
@@ -74,15 +74,15 @@ class test_zsb(TestCaseHelper, TestCase):
             'ask_question', {'text': "Who says yep?"}, prime=bot_jid)
         data = self.run_walker(
             'get_log', {}, prime=bot_jid)
-        self.assertEqual(data[0][0][1], 'Who says yep?')
+        self.assertEqual(data['report'][0][0][1], 'Who says yep?')
 
     def test_zsb_ask_question_multi(self):
         """Test ZSB Create Answer call USE api"""
-        if (not check_model_live('USE')):
+        if (not lact.load_remote_actions('http://js-use-qa')):
             self.skipTest("external resource not available")
         data = self.run_walker('add_bot', {'name': "Bot"})
-        self.assertEqual(data[0]['name'], 'bot')
-        bot_jid = data[0]['jid']
+        self.assertEqual(data['report'][0]['name'], 'bot')
+        bot_jid = data['report'][0]['jid']
         data = self.run_walker('create_answer', {'text': "Yep"}, prime=bot_jid)
         data = self.run_walker(
             'create_answer', {'text': "Nope"}, prime=bot_jid)
@@ -96,4 +96,4 @@ class test_zsb(TestCaseHelper, TestCase):
             'ask_question', {'text': "Who says yep?"}, prime=bot_jid)
         data = self.run_walker(
             'get_log', {}, prime=bot_jid)
-        self.assertEqual(data[0][0][1], 'Who says yep?')
+        self.assertEqual(data['report'][0][0][1], 'Who says yep?')
