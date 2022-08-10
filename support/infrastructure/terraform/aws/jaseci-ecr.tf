@@ -1,4 +1,4 @@
-# Moolah ECR
+#  ECR
 resource "aws_ecr_repository" "zsb-ECR" {
   name                 = format("%s-%s", "zsb-ecr", local.envsuffix)
   image_tag_mutability = "MUTABLE"
