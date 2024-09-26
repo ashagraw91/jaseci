@@ -11,8 +11,8 @@ class JacPodManager:
         self.module_name = module_name
         self.pod_name = f"{module_name}-pod"
         self.service_name = f"{module_name}-service"
-        self.ingress_name = "bcsaiassist-ingress"
-        self.namespace = "default"
+        self.ingress_name = "smart-ingress"
+        self.namespace = "smartimport"
 
     def create_pod(self):
         """Create a Kubernetes pod, service, and ingress to dynamically import and run a module."""
@@ -177,7 +177,7 @@ class JacPodManager:
                         "spec": {
                             "rules": [
                                 {
-                                    "host": "bcsaiassist.apps.bcstechnology.com.au",
+                                    "host": "smartimport.apps.bcstechnology.com.au",
                                     "http": {
                                         "paths": [
                                             {
@@ -209,7 +209,7 @@ class JacPodManager:
             return {
                 "pod_ip": pod_ip,
                 "service_ip": service_ip,
-                "ingress_host": f"bcsaiassist.apps.bcstechnology.com.au",
+                "ingress_host": f"smartimport.apps.bcstechnology.com.au",
                 "ingress_path": f"/api/{self.module_name}-grpc",
             }
 
@@ -240,3 +240,7 @@ def create_pod(module_name: str):
 def delete_pod(module_name: str):
     manager = JacPodManager(module_name=module_name)
     return manager.delete_pod()
+
+# @app.get("/")
+# def health():
+#     return "OK I am alive"

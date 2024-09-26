@@ -8,7 +8,7 @@ def get_service_info(module_name: str) -> dict:
     This function makes a request to the pod manager to create a pod and get
     the necessary service information, including the Ingress host and path.
     """
-    pod_manager_url = f"http://127.0.0.1:8000/create_pod/{module_name}"
+    pod_manager_url = f"http://smartimport.apps.bcstechnology.com.au/create_pod/{module_name}"
 
     response = requests.post(pod_manager_url)
 
